@@ -91,11 +91,11 @@ int checkUtil(const int x, const int y, const int* pattern, const int len) {
                     if(board[x+(cur-tar)*dx[dir]][y+(cur-tar)*dy[dir]] != (pat>>cur*2&0b11)) { break; } }
                 if (cur < len) { continue; }
                 for(cur=tar-1;cur>=0;cur--){
-                    if(board[x+(cur-tar)*dx[dir]][y+(cur-tar)*dy[dir]] != (pat>>cur*2&&0b11)) { break; } }
-                if (cur > 0) { continue; }
+                    if(board[x+(cur-tar)*dx[dir]][y+(cur-tar)*dy[dir]] != (pat>>cur*2&0b11)) { break; } }
+                if (cur >= 0) { continue; }
                 flag = 1;
             } if(flag){ break; }
-        } if(flag){ res++; }
+        } if(flag){ res++; flag=0; }
     }
     return res;
 }
