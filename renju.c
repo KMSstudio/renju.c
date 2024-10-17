@@ -7,7 +7,6 @@
 char board[SIZE][SIZE];  // Game board
 int player = 1;          // Player 1 or 2
 
-#define _TEST
 // Clear the screen based on the operating system
 void clearScreen() {
 #ifdef _TEST
