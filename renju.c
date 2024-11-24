@@ -5,23 +5,7 @@
 #define SIZE 15
 
 // char board[SIZE][SIZE];  // Game board
-char board[SIZE][SIZE] = {
-    { 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0 },
-    { 0, 1, 0, 0, 0, 0, 0, 0, 2, 0, 1, 0, 1, 0, 0 },
-    { 0, 0, 0, 1, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 1, 0, 0, 0 },
-    { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-};
+char board[SIZE][SIZE] = { 0, };
 int player = 1;          // Player 1 or 2
 char screen[2] = { '1', '2' };
 
@@ -31,7 +15,7 @@ void clearScreen() {
     printf("clear\n");
 #else
 #ifdef _WIN32
-    // system("cls");    // Windows
+    system("cls");    // Windows
 #else
     system("clear");  // Ubuntu, macOS
 #endif
@@ -40,11 +24,11 @@ void clearScreen() {
 
 // Initialize the board with '.'
 void initBoard() {
-    // for (int i = 0; i < SIZE; i++) {
-    //     for (int j = 0; j < SIZE; j++) {
-    //         board[i][j] = 0b00;
-    //     }
-    // }
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            board[i][j] = 0b00;
+        }
+    }
 }
 
 // Convert Board Status word to '.'/'1'/'2'
