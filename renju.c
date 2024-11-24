@@ -95,7 +95,7 @@ int checkUtil(const int x, const int y, const int* pattern, const int len) {
                     if(board[x+(cur-tar)*dx[dir]][y+(cur-tar)*dy[dir]] != (pat>>cur*2&0b11)) { break; } }
                 if (cur >= 0) { continue; }
                 flag = 1; bit = dir*2 + (tar>len/2);
-                if(flag){ res |= 1 << bit; flag=0; continue; }
+                if (flag){ res |= 1 << bit; flag=0; continue; }
             } 
         }
     }
@@ -116,7 +116,7 @@ int checkUtil(const int x, const int y, const int* pattern, const int len) {
 int check33(int x, int y) {
     static const int pattern[5] = {0x054, 0x114, 0x144, 0x150, 0};
     static const int pattern_banned[6] = {0x055, 0x115, 0x145, 0x151, 0x154, 0};
-    int bann = checkUtil(x, y, pattern_banned, 5); bann |= (bann & 0x555) << 1 | (bann & 0xAAAA) >> 1;
+    int bann = checkUtil(x, y, pattern_banned, 5); bann |= (bann & 0x5555) << 1 | (bann & 0xAAAA) >> 1;
     int util = checkUtil(x, y, pattern, 6); util &= ~bann;
     int res; for(res=0; util; util >>= 1){ res += util&1; }
     return res;
