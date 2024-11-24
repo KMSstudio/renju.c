@@ -4,8 +4,26 @@
 
 #define SIZE 15
 
-char board[SIZE][SIZE];  // Game board
+// char board[SIZE][SIZE];  // Game board
+char board[SIZE][SIZE] = {
+    { 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0 },
+    { 0, 1, 0, 0, 0, 0, 0, 0, 2, 0, 1, 0, 1, 0, 0 },
+    { 0, 0, 0, 1, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 1, 0, 0, 0 },
+    { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+};
 int player = 1;          // Player 1 or 2
+char screen[2] = { '1', '2' };
 
 // Clear the screen based on the operating system
 void clearScreen() {
@@ -13,7 +31,7 @@ void clearScreen() {
     printf("clear\n");
 #else
 #ifdef _WIN32
-    system("cls");    // Windows
+    // system("cls");    // Windows
 #else
     system("clear");  // Ubuntu, macOS
 #endif
@@ -22,15 +40,15 @@ void clearScreen() {
 
 // Initialize the board with '.'
 void initBoard() {
-    for (int i = 0; i < SIZE; i++) {
-        for (int j = 0; j < SIZE; j++) {
-            board[i][j] = 0b00;
-        }
-    }
+    // for (int i = 0; i < SIZE; i++) {
+    //     for (int j = 0; j < SIZE; j++) {
+    //         board[i][j] = 0b00;
+    //     }
+    // }
 }
 
 // Convert Board Status word to '.'/'1'/'2'
-inline char board2char(char board) { return board ? board+'0' : '.'; }
+inline char board2char(char board) { return board ? screen[board-1] : '.'; }
 // Check is index x fit into the board
 inline int isFitBoard(int idx) { return 0<=idx && idx<SIZE; }
 
@@ -77,7 +95,7 @@ int convertInput(char col, int row, int *x, int *y) {
 int checkUtil(const int x, const int y, const int* pattern, const int len) {
     static const int dx[] = {1, 0, 1, 1};
     static const int dy[] = {0, 1, 1, -1}; 
-    int pat, flag;
+    int pat, flag, bit;
     int res = 0;
     for(int dir=0; dir < 4; dir++) {
         flag = 0;
@@ -92,9 +110,10 @@ int checkUtil(const int x, const int y, const int* pattern, const int len) {
                 for(cur=tar-1;cur>=0;cur--){
                     if(board[x+(cur-tar)*dx[dir]][y+(cur-tar)*dy[dir]] != (pat>>cur*2&0b11)) { break; } }
                 if (cur >= 0) { continue; }
-                flag = 1;
-            } if(flag){ break; }
-        } if(flag){ res++; flag=0; }
+                flag = 1; bit = dir*2 + (tar>len/2);
+                if(flag){ res |= 1 << bit; flag=0; continue; }
+            } 
+        }
     }
     return res;
 }
@@ -112,7 +131,11 @@ int checkUtil(const int x, const int y, const int* pattern, const int len) {
 //
 int check33(int x, int y) {
     static const int pattern[5] = {0x054, 0x114, 0x144, 0x150, 0};
-    return checkUtil(x, y, pattern, 6);
+    static const int pattern_banned[6] = {0x055, 0x115, 0x145, 0x151, 0x154, 0};
+    int bann = checkUtil(x, y, pattern_banned, 5); bann |= (bann & 0x555) << 1 | (bann & 0xAAAA) >> 1;
+    int util = checkUtil(x, y, pattern, 6); util &= ~bann;
+    int res; for(res=0; util; util >>= 1){ res += util&1; }
+    return res;
 }
 
 //
@@ -128,7 +151,9 @@ int check33(int x, int y) {
 //
 int check44(int x, int y) {
     static const int pattern[6] = {0x055, 0x115, 0x145, 0x151, 0x154, 0};
-    return checkUtil(x, y, pattern, 5);
+    int util = checkUtil(x, y, pattern, 5);
+    int res; for(res=0; util; util >>= 1){ res += util&1; }
+    return res;
 }
 
 //
@@ -197,8 +222,17 @@ void playGame() {
         printf("Player %d's turn (enter column and row, e.g., A13): ", player);
 
         // Input processing
-        scanf(" %c%d", &col, &row); // ignore blank
+        scanf(" %c", &col); // ignore blank
         col = toupper(col);  // Convert to uppercase
+
+        // Convert Player skin
+        if (col == '^') { 
+            scanf("%c", &row);
+            screen[player-1] = row;
+            clearScreen();
+            continue;
+        }
+        scanf("%d", &row);
 
         // Convert input coordinates to board indices
         if (!convertInput(col, row, &x, &y)) {
